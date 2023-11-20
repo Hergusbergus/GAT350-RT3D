@@ -8,13 +8,15 @@
 #include "Components/Component.h"
 
 #include "Components/RenderComponent.h"
-#include "Components/ModelRenderComponent.h"
+#include "Components/ModelComponent.h"
+#include "Components/LightComponent.h"
+#include "Components/CameraComponent.h"
+#include "Components/CameraController.h"
 
 #include "Components/PhysicsComponent.h"
 #include "Components/EnginePhysicsComponent.h"
 
 #include "Components/CollisionComponent.h"
-#include "Components/CircleCollisionComponent.h"
 
 #include "Factory.h"
 #include "Resource/ResourceManager.h"

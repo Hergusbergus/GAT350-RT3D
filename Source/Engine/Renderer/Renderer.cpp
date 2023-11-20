@@ -34,7 +34,7 @@ namespace nc
 
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
@@ -47,13 +47,31 @@ namespace nc
 		glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback(DebugCallback, 0);
 
+		// disable all messages with severity `GL_DEBUG_SEVERITY_NOTIFICATION`
+		glDebugMessageControl(
+			GL_DONT_CARE,
+			GL_DONT_CARE,
+			GL_DEBUG_SEVERITY_NOTIFICATION,
+			0, NULL,
+			GL_FALSE);
+
 		glViewport(0, 0, width, height);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW);
 	}
 
-	void Renderer::BeginFrame()
+	void Renderer::BeginFrame(const glm::vec3& color)
 	{
-		glClearColor(0, 0, 0, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glDepthMask(GL_TRUE);
+		glClearColor(color.r, color.g, color.b, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void Renderer::EndFrame()
@@ -86,71 +104,19 @@ namespace nc
 		SDL_RenderDrawPointF(m_renderer, x, y);
 	}
 
-	void Renderer::DrawTexture(Texture* texture, float x, float y, float angle)
+	void Renderer::SetViewport(int width, int height)
 	{
-		vec2 size = texture->GetSize();
-
-		SDL_Rect dest;
-		dest.x = (int)(x - (size.x * 0.5f));
-		dest.y = (int)(y - (size.y * 0.5f));
-		dest.w = (int)size.x;
-		dest.h = (int)size.y;
-
-		// https://wiki.libsdl.org/SDL2/SDL_RenderCopyEx
-		SDL_RenderCopyEx(m_renderer, texture->m_texture, nullptr, &dest, angle, nullptr, SDL_FLIP_NONE);
+		glViewport(0, 0, width, height);
 	}
 
-	void Renderer::DrawTexture(Texture* texture, const Transform& transform)
+	void Renderer::ResetViewport()
 	{
-		mat3 mx = transform.GetMatrix();
-
-		vec2 position = mx.GetTranslation();
-		vec2 size = texture->GetSize() * mx.GetScale();
-
-		SDL_Rect dest;
-		dest.x = (int)(position.x - (size.x * 0.5f));
-		dest.y = (int)(position.y - (size.y * 0.5f));
-		dest.w = (int)size.x;
-		dest.h = (int)size.y;
-
-		// https://wiki.libsdl.org/SDL2/SDL_RenderCopyEx
-		SDL_RenderCopyEx(m_renderer, texture->m_texture, nullptr, &dest, RadiansToDegrees(mx.GetRotation()), nullptr, SDL_FLIP_NONE);
+		glViewport(0, 0, m_width, m_height);
 	}
 
-	void Renderer::DrawTexture(Texture* texture, const Rect& source, const Transform& transform)
+	void Renderer::ClearDepth()
 	{
-		mat3 mx = transform.GetMatrix();
-
-		vec2 position = mx.GetTranslation();
-		vec2 size = vec2{ source.w, source.h } * mx.GetScale();
-
-		SDL_Rect dest;
-		dest.x = (int)(position.x - (size.x * 0.5f));
-		dest.y = (int)(position.y - (size.y * 0.5f));
-		dest.w = (int)size.x;
-		dest.h = (int)size.y;
-
-		// https://wiki.libsdl.org/SDL2/SDL_RenderCopyEx
-		SDL_RenderCopyEx(m_renderer, texture->m_texture, (SDL_Rect*)(&source), &dest, RadiansToDegrees(mx.GetRotation()), nullptr, SDL_FLIP_NONE);
-	}
-
-	void Renderer::DrawTexture(Texture* texture, const Rect& source, const Transform& transform, const vec2& origin, bool flipH)
-	{
-		mat3 mx = transform.GetMatrix();
-
-		vec2 position = mx.GetTranslation();
-		vec2 size = vec2{ source.w, source.h } *mx.GetScale();
-
-		SDL_Rect dest;
-		dest.x = (int)(position.x - (size.x * origin.x));
-		dest.y = (int)(position.y - (size.y * origin.y));
-		dest.w = (int)size.x;
-		dest.h = (int)size.y;
-
-		SDL_Point center{ (int)(size.x * origin.x), (int)(size.y * origin.y) };
-
-		// https://wiki.libsdl.org/SDL2/SDL_RenderCopyEx
-		SDL_RenderCopyEx(m_renderer, texture->m_texture, (SDL_Rect*)(&source), &dest, RadiansToDegrees(mx.GetRotation()), &center, (flipH) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+		GL_DEPTH_CLEAR_VALUE;
 	}
 
 	void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id,

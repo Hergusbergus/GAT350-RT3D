@@ -2,8 +2,14 @@
 #include "Framework/System.h"
 #include "Font.h"
 #include "Model.h"
-#include "Text.h"
 #include "Texture.h"
+#include "Cubemap.h"
+#include "Shader.h"
+#include "Program.h"
+#include "Gui.h"
+#include "VertexBuffer.h"
+#include "Material.h"
+#include "Framebuffer.h"
 
 #include <glad/include/glad/glad.h>
 #include <SDL2-2.28.4/include/SDL.h>
@@ -23,7 +29,7 @@ namespace nc
 		void Update() {}
 
 		void CreateWindow(const std::string& title, int width, int height);
-		void BeginFrame();
+		void BeginFrame(const glm::vec3& color = glm::vec3{ 0 });
 		void EndFrame();
 
 		void SetColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
@@ -32,16 +38,16 @@ namespace nc
 		void DrawPoint(int x, int y);
 		void DrawPoint(float x, float y);
 
-		void DrawTexture(class Texture* texture, float x, float y, float angle = 0.0f);
-		void DrawTexture(class Texture* texture, const Transform& transform);
-		void DrawTexture(class Texture* texture, const Rect& source, const Transform& transform);
-		void DrawTexture(class Texture* texture, const Rect& source, const Transform& transform, const vec2& origin, bool flipH);
+		void SetViewport(int width, int height);
+		void ResetViewport();
+
+		void ClearDepth();
 
 		int GetWidth() const { return m_width; }
 		int GetHeight() const { return m_height; }
 
-		friend class Text;
 		friend class Texture;
+		friend class Gui;
 
 	private:
 		int m_width = 0;

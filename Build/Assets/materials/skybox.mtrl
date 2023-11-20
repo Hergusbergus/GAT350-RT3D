@@ -1,0 +1,12 @@
+{
+  "program": "shaders/skybox.prog",
+  "cubemap": "city_cubemap",
+  "cubemaps": [
+    "textures/city_cubemap/posx.jpg",
+    "textures/city_cubemap/negx.jpg",
+    "textures/city_cubemap/posy.jpg",
+    "textures/city_cubemap/negy.jpg",
+    "textures/city_cubemap/posz.jpg",
+    "textures/city_cubemap/negz.jpg"
+  ]
+}

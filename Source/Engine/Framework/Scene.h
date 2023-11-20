@@ -1,6 +1,7 @@
 #pragma once
 #include "Actor.h"
 #include <list>
+#include <vector>
 
 namespace nc
 {
@@ -26,10 +27,16 @@ namespace nc
 		T* GetActor();
 		template<typename T = Actor>
 		T* GetActorByName(const std::string& name);
+		template<typename T>
+		std::vector<T*> GetComponents();
 
 		void SetGame(World* game) { m_game = game; }
+		void ProcessGUI();
 
 		friend class Actor;
+
+	public:
+		glm::vec3 ambientColor{ 0.2f };
 
 	private:
 		World* m_game = nullptr;
@@ -61,6 +68,20 @@ namespace nc
 		}
 
 		return nullptr;
+	}
+
+	template<typename T>
+	inline std::vector<T*> Scene::GetComponents()
+	{
+		std::vector<T*> components;
+		for (auto& actor : m_actors) 
+		{ 
+			if (!actor->active) { continue; } 
+
+			auto component = actor->GetComponent<T>();
+			if (component) { components.push_back(component); }
+		}
+		return components;
 	}
 
 
