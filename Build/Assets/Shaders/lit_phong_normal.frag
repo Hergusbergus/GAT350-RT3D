@@ -11,7 +11,8 @@
 
 in layout(location = 0) vec3 fposition;
 in layout(location = 1) vec2 ftexcoord;
-in layout(location = 2) mat3 ftbn;
+in layout(location = 2) vec4 fshadowcoord;
+in layout(location = 3) mat3 ftbn;
 
 out layout(location = 0) vec4 ocolor;
 

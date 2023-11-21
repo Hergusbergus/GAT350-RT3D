@@ -25,6 +25,8 @@ namespace nc
 
 		bool CreateDepthTexture(int width, int height);
 
+		void ProcessGUI();
+
 		friend class Renderer;
 		friend class Framebuffer;
 
