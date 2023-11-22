@@ -36,7 +36,7 @@ namespace nc
 	template<typename T>
 	inline bool ResourceManager::Add(const std::string& name, res_t<T> resource)
 	{
-		std::string lname = StringUtils::ToLower(name);
+		std::string lname = ToLower(name);
 
 		if (m_resources.find(lname) != m_resources.end())
 		{
@@ -52,7 +52,7 @@ namespace nc
 	template<typename T, typename ...TArgs>
 	inline res_t<T> ResourceManager::Get(const std::string& filename, TArgs ...args)
 	{
-		std::string lfilename = StringUtils::ToLower(filename);
+		std::string lfilename = ToLower(filename);
 
 		// find resource in resources map
 		if (m_resources.find(lfilename) != m_resources.end())

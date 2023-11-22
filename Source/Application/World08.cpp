@@ -9,8 +9,11 @@ namespace nc
     bool World08::Initialize()
     {
         m_scene = std::make_unique<Scene>();
+        m_scene->Load("Scenes/scene_editor.json");
         m_scene->Load("Scenes/scene_toon.json");
         m_scene->Initialize();
+
+        m_editor = std::make_unique<Editor>();
 
         auto texture = std::make_shared<Texture>();
         texture->CreateDepthTexture(1024, 1024);
@@ -43,7 +46,9 @@ namespace nc
         ENGINE.GetSystem<Gui>()->BeginFrame();
 
         m_scene->Update(dt);
-        m_scene->ProcessGUI();
+
+        m_editor->Update();
+        m_editor->ProcessGUI(m_scene.get());
 
         ENGINE.GetSystem<Gui>()->EndFrame();
     }
@@ -57,7 +62,7 @@ namespace nc
 
         renderer.ClearDepth();
 
-        auto program = GET_RESOURCE(Program, "shaders/toon.prog");
+        auto program = GET_RESOURCE(Program, "shaders/shadow_depth.prog");
         program->Use();
 
         auto lights = m_scene->GetComponents<LightComponent>();
@@ -75,6 +80,7 @@ namespace nc
         {
             if (model->castShadow)
             {
+                glCullFace(GL_FRONT);
                 program->SetUniform("model", model->m_owner->transform.GetMatrix());
                 model->model->Draw();
             }

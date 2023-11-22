@@ -14,11 +14,10 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	StringUtils stringUtils;
-	cout << stringUtils.ToUpper("Hello, world!") << endl;
-	cout << stringUtils.ToLower("Hello, world!") << endl;
-	cout << stringUtils.IsEqualIgnoreCase("Hello, world!", "Hello, guys!") << endl;
-	cout << stringUtils.CreateUnique("Hello, world!") << endl;
+	cout << nc::ToUpper("Hello, world!") << endl;
+	cout << nc::ToLower("Hello, world!") << endl;
+	cout << nc::IsEqualIgnoreCase("Hello, world!", "Hello, guys!") << endl;
+	cout << nc::CreateUnique("Hello, world!") << endl;
 
 	INFO_LOG("Initialize Engine...")
 
