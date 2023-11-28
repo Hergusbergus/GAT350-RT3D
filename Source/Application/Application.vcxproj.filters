@@ -251,5 +251,8 @@
     <None Include="..\..\Build\Assets\Scenes\scene_editor.json">
       <Filter>Scenes</Filter>
     </None>
+    <None Include="..\..\Build\Assets\materials\ui_light.mtrl">
+      <Filter>Materials</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -22,6 +22,10 @@ namespace nc
 		float m_time = 0;
 		float m_speed = 5;
 		float m_blend{ 1 };
+		float m_specularCutoff{ 0.3f };
+		float m_celoutline{ 0.3f };
+
+		int m_cellevels{ 5 };
 
 		uint32_t m_params{ 0 };
 

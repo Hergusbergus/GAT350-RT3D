@@ -50,6 +50,22 @@ namespace nc
         m_editor->Update();
         m_editor->ProcessGUI(m_scene.get());
 
+        // cel-shader
+        ImGui::Begin("Cel");
+        ImGui::SliderInt("Levels", &m_cellevels, 1, 8);
+        ImGui::SliderFloat("Specular cutoff", &m_specularCutoff, 0, 1);
+        ImGui::SliderFloat("Outline", &m_celoutline, 0, 1);
+        ImGui::End();
+
+        auto program = GET_RESOURCE(Program, "shaders/toon.prog");
+        if (program)
+        {
+            program->Use();
+            program->SetUniform("celLevels", m_cellevels);
+            program->SetUniform("celSpecularCutoff", m_specularCutoff);
+            program->SetUniform("celOutline", m_celoutline);
+        }
+
         ENGINE.GetSystem<Gui>()->EndFrame();
     }
 
@@ -62,7 +78,7 @@ namespace nc
 
         renderer.ClearDepth();
 
-        auto program = GET_RESOURCE(Program, "shaders/shadow_depth.prog");
+        auto program = GET_RESOURCE(Program, "shaders/toon.prog");
         program->Use();
 
         auto lights = m_scene->GetComponents<LightComponent>();

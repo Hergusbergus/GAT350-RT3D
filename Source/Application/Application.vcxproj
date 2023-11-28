@@ -185,6 +185,7 @@
     <None Include="..\..\Build\Assets\materials\sprite.mtrl" />
     <None Include="..\..\Build\Assets\materials\squirrel.mtrl" />
     <None Include="..\..\Build\Assets\materials\toon.mtrl" />
+    <None Include="..\..\Build\Assets\materials\ui_light.mtrl" />
     <None Include="..\..\Build\Assets\Scenes\scene.json" />
     <None Include="..\..\Build\Assets\Scenes\scene_editor.json" />
     <None Include="..\..\Build\Assets\Scenes\scene_framebuffer.json" />

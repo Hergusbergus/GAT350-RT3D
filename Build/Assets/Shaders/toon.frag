@@ -44,6 +44,7 @@ uniform struct Light
 uniform vec3 ambientLight;
 uniform int numLights = 3;
 uniform float shadowBias = 0.005f;
+
 uniform int celLevels = 5;
 uniform float celSpecularCutoff = 0.3;
 uniform float celOutline = 0.3;
@@ -74,8 +75,9 @@ float calculateShadow(vec4 shadowcoord, float bias)
 void phong(in Light light, in vec3 position, in vec3 normal, out vec3 diffuse, out vec3 specular)
 {
     vec3 lightDir = (light.type == DIRECTIONAL) ? normalize(-light.direction) : normalize(light.position - position);
+
+
     float spotIntensity = 1;
-    
     if (light.type == SPOT)
     {
         float angle = acos(dot(light.direction, -lightDir));
@@ -95,7 +97,7 @@ void phong(in Light light, in vec3 position, in vec3 normal, out vec3 diffuse, o
 		intensity = max(dot(h, normal), 0);
 
 		intensity = pow(intensity, material.shininess);
-		intensity = (intensity < celSpecularCutoff) ? 0 : 1;
+		if (celSpecularCutoff > 0) intensity = (intensity > celSpecularCutoff) ? 1 : 0;
         specular = vec3(intensity * spotIntensity);
 	}
 }
@@ -119,8 +121,16 @@ void main()
         float outline = dot(fnormal, fviewdir);
         if (outline < celOutline)
         {
-            ocolor = vec4(1);
+            ocolor = vec4(0);
             return; // done rendering this fragment (pixel)
         }
+
+        vec3 diffuse;
+        vec3 specular;
+
+        float attenuation = (lights[i].type == DIRECTIONAL) ? 1 : attenuation(lights[i].position, fposition, lights[i].range);
+
+        phong(lights[i], fposition, fnormal, diffuse, specular);
+        ocolor += ((vec4(diffuse, 1) * albedoColor) + (vec4(specular, 1)) * specularColor) * lights[i].intensity * attenuation * shadow;
     }
 }

@@ -16,14 +16,50 @@ namespace nc
 	{
 		if (!m_active) return;
 
-		// show resources
-		ImGui::Begin("Resources");
+		// Define categories
+		std::vector<std::pair<std::string, std::vector<std::string>>> categories = {
+			{"Textures", {".png"}},
+			{"Models", {".obj"}},
+			{"Materials", {".mtrl"}},
+			{"Shaders", {".prog", ".vert", ".frag"}}
+		};
+
+		// Map to store resources for each category
+		std::map<std::string, std::vector<Resource*>> categorizedResources;
+
+		// Categorize resources
 		auto resources = GET_RESOURCES(Resource);
 		for (auto& resource : resources)
 		{
-			if (ImGui::Selectable(resource->name.c_str(), resource.get() == m_selected))
+			for (const auto& category : categories)
 			{
-				m_selected = resource.get();
+				for (const auto& extension : category.second)
+				{
+					if (resource->name.length() >= extension.length() &&
+						resource->name.compare(resource->name.length() - extension.length(), extension.length(), extension) == 0)
+					{
+						categorizedResources[category.first].emplace_back(resource.get());
+						break;
+					}
+				}
+			}
+		}
+
+		// show resources
+		// Show categorized resources
+		ImGui::Begin("Resources");
+		for (const auto& category : categories)
+		{
+			if (ImGui::TreeNode(category.first.c_str()))
+			{
+				for (auto& resource : categorizedResources[category.first])
+				{
+					if (ImGui::Selectable(resource->name.c_str(), resource == m_selected))
+					{
+						m_selected = resource;
+					}
+				}
+				ImGui::TreePop();
 			}
 		}
 		ImGui::End();

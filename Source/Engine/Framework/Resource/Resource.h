@@ -9,6 +9,7 @@ namespace nc
 	class Resource : public Object
 	{
 	public:
+
 		virtual ~Resource() = default;
 
 		// filename is not a const reference because variadic arguments (...) need an object
